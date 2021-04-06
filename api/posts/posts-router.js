@@ -37,9 +37,28 @@ router.post('/', async (req, res) => {
             const newPost = await Post.insert(post);
             res.status(201).json(newPost);
         }
-        
+
     } catch {
         res.status(500).json({ message: "There was an error while saving the post to the database" });
+    }
+});
+
+router.put('/:id', async (req, res) => {
+    const { id } = req.params;
+    const post = req.body;
+    try {
+        if(!post.title || !post.contents){
+            res.status(400).json({ message: "Please provide title and contents for the post" });
+        } else {
+            const updatedPost = await Post.update(id, post);
+            if(!updatedPost){
+                res.status(404).json({ message: "The post with the specified ID does not exist" });
+            } else {
+                res.status(200).json(updatedPost);
+            }
+        }
+    } catch {
+        res.status(500).json({ message: "The post information could not be modified" })
     }
 });
 
